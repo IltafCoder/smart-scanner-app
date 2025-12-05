@@ -9,7 +9,7 @@ const { pipeline } = require("stream/promises");
 const { v4: uuidv4 } = require("uuid");
 
 const app = express();
-const port = process.env.PORT = 3000;
+const port = process.env.PORT || 3000;
 
 // ========================
 // Middleware
@@ -287,6 +287,11 @@ app.post('/update-master', express.json(), (req, res) => {
 // ========================
 // Start server
 // ========================
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+        console.log(`Server running at http://localhost:${port}`);
+    });
+}
+
+// Export the Express app for Vercel
+module.exports = app;
