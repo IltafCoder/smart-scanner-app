@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData();
             formData.append('csv', file);
 
-            const response = await fetch('http://localhost:3000/upload-csv', {
+            const response = await fetch('/upload-csv', {
                 method: 'POST',
                 body: formData
             });
