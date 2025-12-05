@@ -22,8 +22,11 @@ app.use(express.static(path.join(__dirname, "public")));
 // ========================
 // Ensure uploads folder exists
 // ========================
-const UPLOAD_FOLDER = path.join(__dirname, "uploads");
-if (!fs.existsSync(UPLOAD_FOLDER)) fs.mkdirSync(UPLOAD_FOLDER);
+// Use /tmp on Vercel (serverless), local uploads folder otherwise
+const UPLOAD_FOLDER = process.env.VERCEL 
+    ? '/tmp/uploads' 
+    : path.join(__dirname, "uploads");
+if (!fs.existsSync(UPLOAD_FOLDER)) fs.mkdirSync(UPLOAD_FOLDER, { recursive: true });
 const MASTER_FILE = path.join(UPLOAD_FOLDER, 'masterdatabase.csv');
 const MASTER_COLUMNS = ['SKU', 'EAN-1', 'EAN-2', 'SHELF-1', 'SHELF-2'];
 
