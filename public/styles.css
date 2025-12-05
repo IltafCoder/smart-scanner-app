@@ -1,0 +1,796 @@
+/* General */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    overflow-x: hidden;
+}
+
+/* Banner */
+.banner {
+    width: 100%;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 5px 20px;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(to bottom, #3498db, #1e3c72);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: center;
+    background-color: white;
+    padding: 5px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    width: auto;
+    max-width: 100%;
+}
+
+.navbar .tablink {
+    flex: none;
+    padding: 8px 30px;
+    margin: 0 10px;
+    cursor: pointer;
+    border: 2px solid #3498db;
+    outline: none;
+    background-color: white;
+    color: #3498db;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.navbar .tablink:hover {
+    background-color: #3498db;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.navbar .tablink.active {
+    background-color: #3498db;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Tab content */
+.tabcontent {
+
+    padding: 20px;
+    background-color: white;
+    margin: 30px auto;
+    width: 90%;
+    max-width: 1400px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Barcode example */
+.barcode-example {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.barcode-example img {
+    width: 100%;
+    max-width: 150px;
+}
+
+.barcode-example p {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Scan controls */
+.scan-controls {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#barcode_input {
+    padding: 10px;
+    font-size: 1rem;
+    width: 100%;
+    max-width: 250px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+#select_btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    margin-left: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #2ecc71;
+    color: #fff;
+    cursor: pointer;
+}
+
+#select_btn:hover {
+    background-color: #27ae60;
+}
+
+#process_btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    margin-left: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: gray;
+    color: #fff;
+    cursor: not-allowed;
+}
+
+/* Active/enabled state */
+#process_btn.enabled {
+    background-color: #3498db;
+    cursor: pointer;
+}
+
+/* Hover effect ONLY when enabled */
+#process_btn.enabled:hover {
+    background-color: #2688ca;
+}
+
+
+/* Scan result */
+#resultBarcode {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+}
+
+
+/* Upload container */
+.upload-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    background-color: #f7f7f7;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    width: fit-content;
+    transition: border-color 0.3s, background-color 0.3s;
+    margin-top: 40px;
+}
+
+/* Hover effect */
+.upload-container:hover {
+    border-color: #007bff;
+    background-color: #e9f0ff;
+}
+
+
+/* Styled upload button */
+#uploadBtn,
+#searchBtn {
+    padding: 8px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#uploadBtn:hover,
+#searchBtn:hover {
+    background-color: #2688ca;
+}
+
+#uploadBtn:active,
+#searchBtn:active,
+#exportBtn:active,
+#process_btn:active,
+#select_btn:active {
+    transform: translateY(-1px);
+    /* moves UP slightly */
+
+}
+
+/* Upload status text */
+#uploadStatus {
+    margin-left: 15px;
+    font-weight: bold;
+}
+
+
+.upload-label {
+    display: flex;
+    /* changed from inline-flex */
+    align-items: center;
+    /* vertically centers emoji and text */
+    justify-content: center;
+    /* horizontally centers content inside label */
+    gap: 8px;
+    padding: 8px 20px;
+
+    cursor: pointer;
+    border: 2px solid #3498db;
+    background-color: #3498db;
+    color: white;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    line-height: 1;
+    /* ensures no extra vertical spacing */
+}
+
+.upload-label:hover {
+    background-color: #2882be;
+
+}
+
+
+/* Search Input Styling */
+
+.search-container>p {
+    margin-top: 30px;
+}
+
+.search-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 15px;
+    align-items: start;
+    width: 100%;
+    justify-content: space-between;
+
+}
+
+.search-container>div:nth-of-type(1) {
+
+    width: 35%;
+}
+
+.search-container>div:nth-of-type(2) {
+
+    width: 65%;
+}
+
+
+
+.search-container>div:first-child>div:last-child {
+    align-items: center;
+    display: flex;
+
+    justify-content: space-between;
+}
+
+#searchInput {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px 14px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    outline: none;
+    transition: all 0.25s ease;
+    background: #f9f9f9;
+}
+
+#searchInput:focus {
+    border-color: #4CAF50;
+    background: #fff;
+    box-shadow: 0 0 6px rgba(76, 175, 80, 0.3);
+}
+
+#searchInput::placeholder {
+    color: #999;
+}
+
+#masterTable {
+
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 14px;
+    background-color: #ffffff;
+}
+
+/* Header (column names) */
+#masterTable thead th {
+    background-color: #82c7f4;
+    /* light blue */
+    color: white;
+    padding: 10px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #1f6fa7;
+}
+
+/* Body cells */
+#masterTable tbody td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #ddd;
+    color: #333;
+}
+
+/* Alternate row colors */
+#masterTable tbody tr:nth-child(odd) {
+    background-color: #f4f4f4;
+    /* light gray */
+}
+
+#masterTable tbody tr:nth-child(even) {
+    background-color: #eaf3fb;
+    /* very light blue */
+}
+
+/* Hover effect */
+#masterTable tbody tr:hover {
+    background-color: #d6eaff;
+    cursor: pointer;
+}
+
+/* Optional: smooth look */
+#masterTable {
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Search status label */
+.status-label {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 0px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    width: fit-content;
+}
+
+/* Blue when searching */
+.status-searching {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+/* Green when found */
+.status-found {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+/* Red when not found */
+.status-notfound {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+#dbFooter {
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 10px;
+}
+
+#totalRecords {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #444;
+}
+
+#exportBtn {
+    padding: 8px 20px;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+/* Disabled state */
+#exportBtn:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+/* Hover only when enabled */
+#exportBtn:not(:disabled):hover {
+    background-color: #28b862;
+}
+
+/* Scan Result Table */
+#scanResultTable {
+    width: 50%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-family: Arial, sans-serif;
+    display: none;
+    /* hidden by default, will be shown after search */
+}
+
+/* Table header */
+#scanResultTable thead tr {
+    background-color: #a2d5f2;
+    /* light blue header */
+    color: #000;
+    font-weight: bold;
+    font-size: 0.8rem;
+    text-align: left;
+}
+
+/* Table body rows */
+#scanResultTable tbody tr:nth-child(odd) {
+    background-color: #f2f2f2;
+    /* light gray */
+}
+
+#scanResultTable tbody tr:nth-child(even) {
+    background-color: #d9edf7;
+    /* very light blue */
+}
+
+/* Table cells */
+#scanResultTable th,
+#scanResultTable td {
+    padding: 5px;
+    border: 1px solid #ccc;
+}
+
+.editable-cell {
+    width: 300px;
+    /* fixed width */
+    height: 30px;
+    /* FIXED height */
+    overflow: auto;
+    /* allow scrolling internally */
+    white-space: pre-wrap;
+    /* multiline support */
+    word-wrap: break-word;
+    padding: 5px;
+
+
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+}
+
+.editable-cell::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari/Opera */
+}
+
+
+/* Status label above table */
+#scanStatus {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 0.8rem;
+}
+
+#statusSection {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+}
+
+.status-found {
+    color: green;
+}
+
+.status-notfound {
+    color: red;
+}
+
+.status-searching {
+    color: blue;
+}
+
+#result {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+
+    margin-top: 25px;
+
+
+}
+
+#updateBtn {
+    padding: 8px 20px;
+    width: 120px;
+    /* fixed width */
+    min-width: 120px;
+    display: inline-block;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+
+#updateBtn:hover {
+    background-color: #2688ca;
+    cursor: pointer;
+}
+
+#updateBtn:active {
+
+    transform: translateY(-1px);
+
+}
+
+#updateBtn:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+
+/* Responsiveness  */
+
+@media (max-width: 870px) {
+
+    .search-container>div:nth-of-type(1) {
+
+        width: 100%;
+    }
+
+    .search-container>div:nth-of-type(2) {
+
+        width: 100%;
+    }
+
+
+    .search-container {
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    #statusSection {
+        display: flex;
+        flex-direction: row;
+        /* message + button on SAME LINE */
+        justify-content: center;
+        align-items: center;
+
+        margin-top: 10px;
+        /* spacing below table */
+        width: 100%;
+    }
+
+    #scanStatus {
+        margin: 0 15px;
+
+        font-size: 0.9rem;
+    }
+
+    #updateBtn {
+        margin: 0;
+        width: auto;
+        /* keep button small */
+    }
+
+    #scanResultTable {
+        width: 100%;
+    }
+
+    #result {
+        flex-direction: column;
+    }
+
+    #scanResultTable {
+        width: 100%;
+        table-layout: fixed;
+        /* prevents stretching */
+    }
+
+    .editable-cell {
+        width: 100%;
+        height: 30px;
+        overflow-y: auto;
+        /* only vertical scrolling */
+        overflow-x: hidden;
+        /* prevent horizontal overflow */
+        white-space: nowrap;
+        /* keep single line */
+        text-overflow: ellipsis;
+        /* ... effect */
+        word-break: break-word;
+
+        padding: 5px;
+
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .editable-cell::-webkit-scrollbar {
+        display: none;
+    }
+
+
+
+}
+
+
+@media (max-width: 600px) {
+
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+        /* horizontal scroll */
+        -webkit-overflow-scrolling: touch;
+        /* smooth on mobile */
+    }
+
+    #masterTable {
+        width: max-content;
+        /* table expands to fit content */
+        min-width: 100%;
+        /* ensures at least fills container */
+        border-collapse: collapse;
+    }
+
+    #masterTable th,
+    #masterTable td {
+        white-space: nowrap;
+        /* prevent wrapping */
+    }
+
+    .scan-controls {
+        width: 100%;
+        /* allow children to stretch */
+        display: flex;
+        flex-direction: column;
+        /* input on top */
+        align-items: center;
+    }
+
+    .scan-controls input {
+        width: 100%;
+        /* full width */
+        min-width: 400px;
+        /* OPTIONAL - remove if you want even wider */
+        box-sizing: border-box;
+        /* ensures padding doesn't reduce width */
+        margin-bottom: 10px;
+    }
+
+    .scan-controls button {
+        margin: 5px 5px;
+        width: 80%;
+        /* buttons width on mobile */
+    }
+
+    .tabcontent {
+        margin-bottom: 40px;
+
+
+    }
+
+    #dbFooter {
+        margin-top: 30px;
+
+        flex-direction: column;
+    }
+
+    #exportBtn {
+        width: 100%;
+    }
+
+    #totalRecords {
+        margin: 0;
+    }
+
+
+}
+
+
+@media (max-width: 500px) {
+
+    #statusSection {
+        display: flex;
+        flex-direction: column;
+        /* message + button on SAME LINE */
+        justify-content: center;
+        align-items: center;
+        margin-left: 0;
+        margin-top: 10px;
+
+    }
+
+    #updateBtn {
+        margin-top: 20px;
+    }
+
+
+    .tabcontent {
+        margin-bottom: 50px;
+        padding: 10px;
+
+
+    }
+
+
+    .scan-controls {
+        width: 100%;
+        /* allow children to stretch */
+        display: flex;
+        flex-direction: column;
+        /* input on top */
+        align-items: center;
+    }
+
+    .scan-controls input {
+        width: 100%;
+        /* full width */
+        min-width: 100%;
+        /* OPTIONAL - remove if you want even wider */
+        box-sizing: border-box;
+        /* ensures padding doesn't reduce width */
+        margin-bottom: 10px;
+    }
+
+    .scan-controls button {
+        margin: 5px 5px;
+        width: 100%;
+        /* buttons width on mobile */
+    }
+
+    .tabcontent {
+        width: calc(100% - 20px);
+        /* subtract margins */
+        margin-left: 10px;
+        margin-right: 10px;
+        margin-bottom: 50px;
+
+
+    }
+
+    .banner {
+
+        font-size: 0.8rem;
+        font-weight: bold;
+        padding: 5px 20px;
+
+
+    }
+
+    .navbar {
+        padding-left: 5px;
+        padding-right: 5px;
+        display: flex;
+        flex-wrap: wrap;
+        /* allow wrapping */
+        justify-content: center;
+        gap: 5px;
+        /* small spacing between tabs */
+    }
+
+    .navbar .tablink {
+        padding: 6px 12px;
+        /* smaller padding for mobile */
+        margin: 0;
+        /* remove big margin */
+        font-size: 0.7rem;
+        /* slightly smaller text */
+        flex: 1 1 auto;
+        /* allow shrinking */
+        text-align: center;
+    }
+
+
+}

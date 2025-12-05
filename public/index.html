@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="./images/favico.png">
+
+    <!-- Styles + JS -->
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./script.js" defer></script>
+
+    <title>Smart Scanner</title>
+</head>
+
+<body>
+
+    <!-- Banner -->
+    <div class="banner">
+        <h1>Smart Scanner</h1>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="navbar">
+        <button class="tablink active" onclick="openTab('scan', this)">
+            <span class="icon">📷</span>
+            <span class="text">Scan</span>
+        </button>
+
+        <button class="tablink" onclick="openTab('search', this)">
+            <span class="icon">🔍</span>
+            <span class="text">Bulk Search</span>
+        </button>
+
+        <button class="tablink" onclick="openTab('database', this)">
+            <span class="icon">🗂️</span>
+            <span class="text">Database</span>
+        </button>
+    </div>
+
+    <!-- ====================================================== -->
+    <!-- SCAN TAB -->
+    <!-- ====================================================== -->
+    <div id="scan" class="tabcontent">
+
+        <h2>Scan Product</h2>
+        <p>Please scan your product using the PDA scanner.</p>
+
+        <!-- Example image -->
+        <div class="barcode-example">
+            <img src="./images/barcode.jpg" alt="Example Product Barcode">
+            <p>Product Example Barcode</p>
+        </div>
+
+        <!-- Scan Controls -->
+        <div class="scan-controls">
+            <input type="text" id="barcode_input" placeholder="Scan your product here" autofocus>
+            <button id="select_btn">Select</button>
+            <button id="process_btn" disabled>Process</button>
+        </div>
+
+        <!-- Shows scanned barcode -->
+        <div id="resultBarcode"></div>
+
+        <!-- Table + Status Section -->
+        <div id="result">
+
+            <!-- Dynamic scan result table -->
+            <table id="scanResultTable" style="display:none">
+                <thead>
+                    <tr>
+                        <th>SHELF-1</th>
+                        <th>SHELF-2</th>
+                    </tr>
+                </thead>
+                <tbody id="scanTableBody"></tbody>
+            </table>
+
+            <!-- Status + Update Button -->
+            <div id="statusSection">
+                <p id="scanStatus"></p>
+                <button id="updateBtn" style="display:none" disabled>Update</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ====================================================== -->
+    <!-- BULK SEARCH TAB (COMING LATER) -->
+    <!-- ====================================================== -->
+    <div id="search" class="tabcontent" style="display:none;">
+        <h2>Bulk Search</h2>
+        <p>Here you can search using a list of SKU/EAN.</p>
+        <p>This feature will be updated in the next version.</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <!-- DATABASE TAB -->
+    <!-- ====================================================== -->
+    <div id="database" class="tabcontent" style="display:none;">
+
+        <h2>Manage Database</h2>
+        <p>You can upload CSV files or export the database.</p>
+
+        <!-- CSV Upload -->
+        <div class="upload-container">
+            <input type="file" id="csvFileInput" accept=".csv" hidden>
+            <label for="csvFileInput" class="upload-label">📤 Upload CSV</label>
+            <span id="uploadStatus"></span>
+        </div>
+
+        <!-- Search + Table Display -->
+        <div class="search-container">
+
+            <!-- Search Box -->
+            <div>
+                <p>Search a product using EAN/SKU code.</p>
+                <input type="text" id="searchInput" placeholder="Enter SKU or EAN">
+
+                <div>
+                    <!-- Radio Buttons -->
+                    <label><input type="radio" name="searchType" value="SKU" checked> SKU</label>
+                    <label><input type="radio" name="searchType" value="EAN"> EAN</label>
+
+                    <!-- Search Button -->
+                    <button id="searchBtn">Search</button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div>
+                <p id="searchStatus" class="status-label">Ready</p>
+
+                <div class="table-container">
+                    <table id="masterTable">
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>EAN-1</th>
+                                <th>EAN-2</th>
+                                <th>SHELF-1</th>
+                                <th>SHELF-2</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div id="dbFooter">
+            <p id="totalRecords">Total Records: 0</p>
+            <button id="exportBtn" disabled>Export Database</button>
+        </div>
+
+    </div>
+
+</body>
+</html>
