@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     async function processInput() {
-        const code = barcodeInput.value.trim();
+        const code = barcodeInput.value.trim().toUpperCase()
         if (!code) return;
 
         lastScannedCode = code;
@@ -288,3 +288,4 @@ document.addEventListener('DOMContentLoaded', () => {
     barcodeInput.focus();
 
 });
+
