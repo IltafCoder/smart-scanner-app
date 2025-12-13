@@ -193,24 +193,43 @@ app.post("/upload-csv", upload.single("csv"), async (req, res) => {
 
 // Search masterdatabase
 app.get("/search-master", (req, res) => {
-    const { type, query } = req.query; // type = 'SKU' or 'EAN', query = search value
+    const { type, query } = req.query;
     if (!type || !query) return res.json({ data: [] });
 
-    // Check if master CSV exists
     if (!fs.existsSync(MASTER_FILE)) {
         return res.json({ data: [], message: "Master database not found" });
     }
 
     const results = [];
-    const queryLower = query.toLowerCase(); // convert query to lowercase
+    const queryTrim = query.trim();
 
     fs.createReadStream(MASTER_FILE)
         .pipe(csv({ separator: ';' }))
         .on("data", row => {
-            if (type === 'SKU' && row['SKU'] && row['SKU'].toLowerCase() === queryLower) {
+
+            // ---------- SKU SEARCH (case-insensitive) ----------
+            if (
+                type === 'SKU' &&
+                row['SKU'] &&
+                row['SKU'].toLowerCase() === queryTrim.toLowerCase()
+            ) {
                 results.push(row);
-            } else if (type === 'EAN' && (row['EAN-1'] === query || row['EAN-2'] === query)) {
-                results.push(row);
+            }
+
+            // ---------- EAN SEARCH (supports multiple EANs in EAN-2) ----------
+            if (type === 'EAN') {
+                const ean1 = row['EAN-1']?.trim();
+                const ean2Raw = row['EAN-2'] || "";
+
+                // Split EAN-2 into multiple values
+                const ean2List = ean2Raw
+                    .split(/[|,;]/)          // supports | , ;
+                    .map(e => e.trim())
+                    .filter(Boolean);
+
+                if (ean1 === queryTrim || ean2List.includes(queryTrim)) {
+                    results.push(row);
+                }
             }
         })
         .on("end", () => res.json({ data: results }))
@@ -312,4 +331,5 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Export the Express app for Vercel
 module.exports = app;
+
 
