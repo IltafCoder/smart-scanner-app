@@ -65,6 +65,20 @@
         <!-- Table + Status Section -->
         <div id="result">
 
+            <!-- Non-editable info -->
+            <div class="scan-container">
+                <table id="infoTable" style="display:none; margin-top:15px;">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>EAN-1</th>
+                            <th>EAN-2</th>
+                        </tr>
+                    </thead>
+                    <tbody id="infoTableBody"></tbody>
+                </table>
+            </div>
+            
             <!-- Dynamic scan result table -->
             <table id="scanResultTable" style="display:none">
                 <thead>
@@ -159,3 +173,4 @@
 
 </body>
 </html>
+
