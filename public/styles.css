@@ -472,9 +472,9 @@ body {
 
 #infoTable td.non-editable {
     background: #eee;
-    font-weight: 600;
     color: #333;
 }
+
 
 /* Hover effect */
 #infoTable tbody tr:hover {
