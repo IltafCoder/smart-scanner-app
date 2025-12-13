@@ -62,8 +62,7 @@ app.get("/", (req, res) => {
 });
 
 
-
-// Scan barcode endpoint (supports SKU or EAN)
+// Scan barcode endpoint (supports SKU or EAN, incl. multiple EANs in EAN-2)
 app.post("/scan", (req, res) => {
     const scannedCode = req.body.code?.trim();
     if (!scannedCode) return res.status(400).json({ found: false, rows: [] });
@@ -73,18 +72,32 @@ app.post("/scan", (req, res) => {
     }
 
     const rows = [];
+
     fs.createReadStream(MASTER_FILE)
         .pipe(csv({ separator: ";" }))
         .on("data", row => rows.push(row))
         .on("end", () => {
             let matches = [];
 
+            // ---------- EAN scan ----------
             if (/^\d{12,13}$/.test(scannedCode)) {
-                // Treat as EAN
-                matches = rows.filter(r => r["EAN-1"] === scannedCode || r["EAN-2"] === scannedCode);
-            } else {
-                // Treat as SKU (case-insensitive)
-                matches = rows.filter(r => r["SKU"]?.toLowerCase() === scannedCode.toLowerCase());
+                matches = rows.filter(r => {
+                    const ean1 = r["EAN-1"]?.trim();
+                    const ean2Raw = r["EAN-2"] || "";
+
+                    const ean2List = ean2Raw
+                        .split(/[|,;]/)     // supports | , ;
+                        .map(e => e.trim())
+                        .filter(Boolean);
+
+                    return ean1 === scannedCode || ean2List.includes(scannedCode);
+                });
+            }
+            // ---------- SKU scan (case-insensitive) ----------
+            else {
+                matches = rows.filter(
+                    r => r["SKU"]?.toLowerCase() === scannedCode.toLowerCase()
+                );
             }
 
             if (matches.length > 0) {
@@ -107,6 +120,7 @@ app.post("/scan", (req, res) => {
             res.status(500).json({ found: false, rows: [] });
         });
 });
+
 
 
 
@@ -298,3 +312,4 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Export the Express app for Vercel
 module.exports = app;
+
