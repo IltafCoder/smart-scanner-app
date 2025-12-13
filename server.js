@@ -280,25 +280,45 @@ app.get("/download-master", (req, res) => {
 
 app.post('/update-master', express.json(), (req, res) => {
     const { code, updates } = req.body;
-
     if (!code || !updates) return res.json({ success: false });
 
+    const normalizedCode = code.trim().toLowerCase();
     const rows = [];
-
+    let updated = false;
 
     fs.createReadStream(MASTER_FILE)
         .pipe(csv({ separator: ';' }))
         .on('data', row => {
-            // Match the scanned code with SKU or EAN columns
-            if (row['SKU'] === code || row['EAN-1'] === code || row['EAN-2'] === code) {
-                Object.assign(row, updates); // apply updates
+
+            const sku = row['SKU']?.trim().toLowerCase();
+            const ean1 = row['EAN-1']?.trim();
+            const ean2List = row['EAN-2']
+                ? row['EAN-2']
+                    .split(/[,\s]+/)   // supports comma or space
+                    .map(e => e.trim())
+                : [];
+
+            const isMatch =
+                sku === normalizedCode ||
+                ean1 === code ||
+                ean2List.includes(code);
+
+            if (isMatch) {
+                Object.assign(row, updates);
+                updated = true;
             }
 
             rows.push(row);
         })
         .on('end', () => {
-            // Prepare headers for CSV writer
-            const headers = Object.keys(rows[0]).map(h => ({ id: h, title: h }));
+            if (!updated) {
+                return res.json({ success: false, message: "No matching record found" });
+            }
+
+            const headers = Object.keys(rows[0]).map(h => ({
+                id: h,
+                title: h
+            }));
 
             const csvWriter = createObjectCsvWriter({
                 path: MASTER_FILE,
@@ -313,11 +333,12 @@ app.post('/update-master', express.json(), (req, res) => {
                     res.json({ success: false });
                 });
         })
-        .on('error', (err) => {
+        .on('error', err => {
             console.error('CSV read error:', err);
             res.json({ success: false });
         });
 });
+
 
 
 // ========================
@@ -331,5 +352,6 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Export the Express app for Vercel
 module.exports = app;
+
 
 
