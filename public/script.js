@@ -47,22 +47,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     processBtn.addEventListener('click', processInput)
 
-
-    async function processInput() {
-        const code = barcodeInput.value.trim().toUpperCase()
+async function processInput() {
+        const code = barcodeInput.value.trim().toUpperCase();
         if (!code) return;
 
         lastScannedCode = code;
         resultBarcode.textContent = `Scanned Barcode: ${code}`;
 
-        // Reset table and status
+        // Reset tables and status
+        infoTableBody.innerHTML = "";
         scanTableBody.innerHTML = "";
+        infoTable.style.display = "none";
         scanResultTable.style.display = "none";
         scanStatus.textContent = "Searching...";
         scanStatus.style.color = "blue";
 
         try {
-            // Fetch scanned data from backend
+            // Request scan results from backend
             const res = await fetch('/scan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -72,9 +73,30 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await res.json();
 
             if (data.found && data.rows && data.rows.length > 0) {
-                // Loop over all matched rows
+
                 data.rows.forEach(row => {
-                    const tr = document.createElement("tr");
+                    //
+                    // -------------------------
+                    // TABLE 1 — NON-EDITABLE
+                    // -------------------------
+                    //
+                    const infoTr = document.createElement("tr");
+
+                    ["SKU", "EAN1", "EAN2"].forEach(col => {
+                        const td = document.createElement("td");
+                        td.textContent = row[col] || "";
+                        td.classList.add("non-editable");
+                        infoTr.appendChild(td);
+                    });
+
+                    infoTableBody.appendChild(infoTr);
+
+                    //
+                    // -------------------------
+                    // TABLE 2 — EDITABLE SHELVES
+                    // -------------------------
+                    //
+                    const shelfTr = document.createElement("tr");
 
                     ["SHELF1", "SHELF2"].forEach(col => {
                         const td = document.createElement("td");
@@ -82,25 +104,27 @@ document.addEventListener('DOMContentLoaded', () => {
                         const editableDiv = document.createElement("div");
                         editableDiv.contentEditable = true;
                         editableDiv.classList.add("editable-cell");
-                        editableDiv.textContent = row[col] || '';
+                        editableDiv.textContent = row[col] || "";
 
+                        // Enable update button only on edit
                         editableDiv.addEventListener('input', () => {
                             updateBtn.disabled = false;
                         });
 
                         td.appendChild(editableDiv);
-                        tr.appendChild(td);
+                        shelfTr.appendChild(td);
                     });
 
-                    scanTableBody.appendChild(tr);
+                    scanTableBody.appendChild(shelfTr);
                 });
 
-                // Show table
+                // Show both tables
+                infoTable.style.display = "table";
                 scanResultTable.style.display = "table";
+
                 scanStatus.textContent = "Record(s) found";
                 scanStatus.style.color = "green";
 
-                // Keep Update button disabled initially
                 updateBtn.disabled = true;
                 updateBtn.style.display = "inline-block";
 
@@ -115,11 +139,11 @@ document.addEventListener('DOMContentLoaded', () => {
             scanStatus.style.color = "red";
         }
 
-        barcodeInput.value = '';
+        barcodeInput.value = "";
         barcodeInput.focus();
         processBtn.disabled = true;
         processBtn.classList.remove('enabled');
-    }
+}
 
 
     // ======================
@@ -288,4 +312,5 @@ document.addEventListener('DOMContentLoaded', () => {
     barcodeInput.focus();
 
 });
+
 
