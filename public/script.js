@@ -135,13 +135,15 @@ async function processInput() {
                 updateBtn.disabled = true;
                 updateBtn.style.display = "inline-block";
 
-                // 🔥 OPEN POPUP ALWAYS
-                popup.classList.add("active");
+
                 
             } else {
                 scanStatus.textContent = "No record found";
                 scanStatus.style.color = "red";
             }
+
+                // 🔥 OPEN POPUP ALWAYS
+                popup.classList.add("active");
 
         } catch (err) {
             console.error("Error scanning:", err);
@@ -322,6 +324,7 @@ async function processInput() {
     barcodeInput.focus();
 
 });
+
 
 
 
