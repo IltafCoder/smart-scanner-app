@@ -135,60 +135,62 @@ app.use((err, req, res, next) => {
 // ========================
 // CSV Upload
 // ========================
-app.post("/upload-csv", upload.single("csv"), async (req, res) => {
-    const file = req.file;
-    if (!file) return res.status(400).json({ message: "No file uploaded" });
 
-    // Ensure master CSV exists
-    if (!fs.existsSync(MASTER_FILE)) {
-        const header = MASTER_COLUMNS.join(";") + "\n";
-        fs.writeFileSync(MASTER_FILE, header, "utf8");
+async function deduplicateMasterCSV() {
+    if (!fs.existsSync(MASTER_FILE)) return;
+
+    const rows = [];
+
+    await new Promise((resolve, reject) => {
+        fs.createReadStream(MASTER_FILE)
+            .pipe(csv({ separator: ';' }))
+            .on('data', row => rows.push(row))
+            .on('end', resolve)
+            .on('error', reject);
+    });
+
+    const seenSKU = new Set();
+    const seenEAN = new Set();
+    const uniqueRows = [];
+
+    for (const row of rows) {
+        const sku = row['SKU']?.trim().toLowerCase();
+        const ean1 = row['EAN-1']?.trim();
+        const ean2List = row['EAN-2']
+            ? row['EAN-2'].split(/[,\s]+/).map(e => e.trim())
+            : [];
+
+        let isDuplicate = false;
+
+        if (sku && seenSKU.has(sku)) isDuplicate = true;
+        if (ean1 && seenEAN.has(ean1)) isDuplicate = true;
+
+        for (const ean of ean2List) {
+            if (seenEAN.has(ean)) {
+                isDuplicate = true;
+                break;
+            }
+        }
+
+        if (!isDuplicate) {
+            if (sku) seenSKU.add(sku);
+            if (ean1) seenEAN.add(ean1);
+            ean2List.forEach(e => seenEAN.add(e));
+
+            uniqueRows.push(row);
+        }
     }
 
-    const uploadedFilePath = file.path;
+    const headers = MASTER_COLUMNS.map(h => ({ id: h, title: h }));
 
-    try {
-        // Read uploaded CSV
-        const rows = [];
-        let uploadedHeaders = [];
-        await new Promise((resolve, reject) => {
-            fs.createReadStream(uploadedFilePath)
-                .pipe(csv({ separator: ";" }))
-                .on("headers", (headers) => {
-                    uploadedHeaders = headers; // save the uploaded headers order
-                })
-                .on("data", (data) => rows.push(data))
-                .on("end", resolve)
-                .on("error", reject);
-        });
+    const csvWriter = createObjectCsvWriter({
+        path: MASTER_FILE,
+        header: headers,
+        fieldDelimiter: ';'
+    });
 
-        // Append to master CSV using the order of MASTER_COLUMNS
-        const writeStream = fs.createWriteStream(MASTER_FILE, { flags: "a" });
-        rows.forEach((row) => {
-            const line = MASTER_COLUMNS.map((col, index) => {
-                // Use value from uploaded CSV in same column position if exists, else empty
-                const uploadedCol = uploadedHeaders[index];
-                return uploadedCol ? row[uploadedCol] || "" : "";
-            }).join(";") + "\n";
-            writeStream.write(line);
-        });
-        writeStream.end();
-
-        // Delete uploaded file
-        fs.unlinkSync(uploadedFilePath);
-
-        res.json({
-            message: "File uploaded!",
-            filename: file.originalname
-        });
-
-    } catch (err) {
-        console.error(err);
-        if (fs.existsSync(uploadedFilePath)) fs.unlinkSync(uploadedFilePath);
-        res.status(500).json({ message: "Error processing CSV" });
-    }
-});
-
+    await csvWriter.writeRecords(uniqueRows);
+}
 
 
 // Search masterdatabase
@@ -352,6 +354,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Export the Express app for Vercel
 module.exports = app;
+
 
 
 
