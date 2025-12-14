@@ -29,6 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultBarcode = document.getElementById('resultBarcode');
     const updateBtn = document.getElementById('updateBtn');
 
+    const popup = document.getElementById('scanPopupOverlay');
+    const popupContent = document.getElementById('popupContent');
+    const popupBackBtn = document.getElementById('popupBackBtn');
+
+    const scanTab = document.getElementById('scan');
+    const resultSection = document.getElementById('result');
+
     selectBtn.addEventListener('click', () => barcodeInput.focus());
 
     barcodeInput.addEventListener('input', () => {
@@ -46,6 +53,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     processBtn.addEventListener('click', processInput)
+
+    // Back button for mobile popup
+    popupBackBtn.addEventListener('click', () => {
+        popup.style.display = 'none';
+    });
+
+    // Update display based on screen size
+    function updateResultDisplay() {
+        if (window.innerWidth <= 600 && resultSection.hasChildNodes()) {
+            popupContent.appendChild(resultSection);
+            popup.style.display = 'block';
+        } else {
+            scanTab.appendChild(resultSection);
+            popup.style.display = 'none';
+        }
+    }
+
+    window.addEventListener('resize', updateResultDisplay);
 
 async function processInput() {
         const code = barcodeInput.value.trim().toUpperCase();
@@ -127,6 +152,9 @@ async function processInput() {
 
                 updateBtn.disabled = true;
                 updateBtn.style.display = "inline-block";
+
+                // Update display (popup for mobile)
+                updateResultDisplay();
 
             } else {
                 scanStatus.textContent = "No record found";
@@ -312,5 +340,6 @@ async function processInput() {
     barcodeInput.focus();
 
 });
+
 
 
