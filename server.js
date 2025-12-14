@@ -192,6 +192,58 @@ async function deduplicateMasterCSV() {
     await csvWriter.writeRecords(uniqueRows);
 }
 
+// CSV Upload
+app.post("/upload-csv", upload.single("csv"), async (req, res) => {
+    const file = req.file;
+    if (!file) return res.status(400).json({ message: "No file uploaded" });
+
+    if (!fs.existsSync(MASTER_FILE)) {
+        fs.writeFileSync(MASTER_FILE, MASTER_COLUMNS.join(";") + "\n");
+    }
+
+    const uploadedFilePath = file.path;
+
+    try {
+        const rows = [];
+        let uploadedHeaders = [];
+
+        await new Promise((resolve, reject) => {
+            fs.createReadStream(uploadedFilePath)
+                .pipe(csv({ separator: ";" }))
+                .on("headers", h => uploadedHeaders = h)
+                .on("data", d => rows.push(d))
+                .on("end", resolve)
+                .on("error", reject);
+        });
+
+        const writeStream = fs.createWriteStream(MASTER_FILE, { flags: "a" });
+
+        rows.forEach(row => {
+            const line = MASTER_COLUMNS.map((_, i) => {
+                const col = uploadedHeaders[i];
+                return col ? row[col] || "" : "";
+            }).join(";") + "\n";
+            writeStream.write(line);
+        });
+
+        writeStream.end();
+        fs.unlinkSync(uploadedFilePath);
+
+        // 🔥 DEDUPLICATE AFTER UPLOAD
+        await deduplicateMasterCSV();
+
+        res.json({
+            message: "File uploaded!",
+            filename: file.originalname
+        });
+
+    } catch (err) {
+        console.error(err);
+        if (fs.existsSync(uploadedFilePath)) fs.unlinkSync(uploadedFilePath);
+        res.status(500).json({ message: "Error processing CSV" });
+    }
+});
+
 
 // Search masterdatabase
 app.get("/search-master", (req, res) => {
@@ -354,6 +406,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Export the Express app for Vercel
 module.exports = app;
+
 
 
 
