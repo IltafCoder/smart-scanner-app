@@ -95,6 +95,7 @@ body {
 /* Scan controls */
 .scan-controls {
     text-align: center;
+    margin-bottom: 20px;
     margin-top: 20px;
 }
 
@@ -574,48 +575,33 @@ body {
     cursor: not-allowed;
 }
 
-/* Popup Overlay */
-/* Popup overlay — full screen, flex centering */
 #scanPopupOverlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0,0,0,0.5); /* semi-transparent black */
-    display: none; 
-    justify-content: center; /* horizontal center */
-    align-items: center;     /* vertical center */
-    padding: 10px;           /* small padding so popup isn't stuck to edges */
-    box-sizing: border-box;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    justify-content: center;
+    align-items: center;
     z-index: 9999;
 }
 
-/* Popup content — responsive */
-#scanPopup {
-    margin-top: 70px;
-    background: #fff;
-    width: 100%;
-    max-width: 580px;
-    max-height: 90vh;
-    padding: 15px;
-    border-radius: 8px;
-    overflow-y: auto;
+#scanPopupOverlay.active {
     display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
 }
-/* Back button */
+
+#scanPopup {
+    background: #fff;
+    width: min(95%, 700px);
+    max-height: 90vh;
+    padding: 16px;
+    border-radius: 12px;
+    overflow-y: auto;
+}
+
 #popupBackBtn {
     background: none;
     border: none;
-    outline: none;
-    color: black;
     font-size: 1.5rem;
-    padding: 0;
-    margin-top: 8px;
-    margin-bottom: 8px;
-
     cursor: pointer;
 }
 
