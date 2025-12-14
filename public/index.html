@@ -13,11 +13,49 @@
     <title>Smart Scanner</title>
 </head>
 
-<!-- Mobile Popup Overlay -->
 <div id="scanPopupOverlay">
     <div id="scanPopup">
-        <div id="popupContent"></div>
         <button id="popupBackBtn">←</button>
+
+        <div id="popupContent">
+            <div id="resultBarcode" class="scanned-barcode"></div>
+
+            <!-- ONLY RESULT LOCATION -->
+            <div id="result">
+
+                <!-- Non-editable info -->
+                <div class="scan-container">
+                    <table id="infoTable" style="display:none; margin-top:15px;">
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>EAN-1</th>
+                                <th>EAN-2</th>
+                            </tr>
+                        </thead>
+                        <tbody id="infoTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Editable shelves -->
+                <table id="scanResultTable" style="display:none">
+                    <thead>
+                        <tr>
+                            <th>SHELF-1</th>
+                            <th>SHELF-2</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scanTableBody"></tbody>
+                </table>
+
+                <!-- Status + Update -->
+                <div id="statusSection">
+                    <p id="scanStatus"></p>
+                    <button id="updateBtn" style="display:none" disabled>Update</button>
+                </div>
+
+            </div>
+        </div>
     </div>
 </div>
 
@@ -68,49 +106,7 @@
             <button id="process_btn" disabled>Process</button>
         </div>
 
-        <div id="resultWrapper">
-
-        <!-- Table + Status Section -->
-        <div id="result">
-
-            <!-- Shows scanned barcode -->
-            <div id="resultBarcode"></div>
-
-            <!-- Non-editable info -->
-            <div class="scan-container">
-                <table id="infoTable" style="display:none; margin-top:15px;">
-                    <thead>
-                        <tr>
-                            <th>SKU</th>
-                            <th>EAN-1</th>
-                            <th>EAN-2</th>
-                        </tr>
-                    </thead>
-                    <tbody id="infoTableBody"></tbody>
-                </table>
-            </div>
-
-            <!-- Dynamic scan result table -->
-            <table id="scanResultTable" style="display:none">
-                <thead>
-                    <tr>
-                        <th>SHELF-1</th>
-                        <th>SHELF-2</th>
-                    </tr>
-                </thead>
-                <tbody id="scanTableBody"></tbody>
-            </table>
-
-            <!-- Status + Update Button -->
-            <div id="statusSection">
-                <p id="scanStatus"></p>
-                <button id="updateBtn" style="display:none" disabled>Update</button>
-            </div>
-
-        </div>
-
-
-    </div>
+         
     </div>
 
     <!-- ====================================================== -->
@@ -187,5 +183,6 @@
 
 </body>
 </html>
+
 
 
