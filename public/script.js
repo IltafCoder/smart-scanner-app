@@ -236,7 +236,7 @@ async function processInput() {
                 infoTable.style.display = "table";
                 scanResultTable.style.display = "table";
 
-                scanStatus.textContent = "Record(s) found";
+                scanStatus.textContent = "Rekord található";
                 scanStatus.style.color = "green";
 
                 updateBtn.disabled = true;
@@ -430,6 +430,7 @@ async function processInput() {
     barcodeInput.focus();
 
 });
+
 
 
 
