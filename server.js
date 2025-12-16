@@ -394,6 +394,81 @@ app.post('/update-master', express.json(), (req, res) => {
 });
 
 
+// bulk search
+
+app.post('/bulk-search', express.json(), (req, res) => {
+    const { codes } = req.body;
+
+    if (!Array.isArray(codes) || codes.length === 0) {
+        return res.json({ success: false, rows: [] });
+    }
+
+    const searchSet = new Set(codes.map(c => c.toUpperCase()));
+    const results = [];
+
+    fs.createReadStream(MASTER_FILE)
+        .pipe(csv({ separator: ';' }))
+        .on('data', row => {
+            const sku = (row['SKU'] || '').toUpperCase();
+            const ean1 = (row['EAN-1'] || '').toUpperCase();
+            const ean2Raw = (row['EAN-2'] || '').toUpperCase();
+
+            const ean2List = ean2Raw
+                .split(/[,| ]+/)
+                .map(e => e.trim())
+                .filter(Boolean);
+
+            if (
+                searchSet.has(sku) ||
+                searchSet.has(ean1) ||
+                ean2List.some(e => searchSet.has(e))
+            ) {
+                results.push(row);
+            }
+        })
+        .on('end', async () => {
+
+            if (results.length > 0) {
+                const headers = Object.keys(results[0]).map(h => ({
+                    id: h,
+                    title: h
+                }));
+
+                const csvWriter = createObjectCsvWriter({
+                    path: BULK_RESULTS_FILE,
+                    header: headers,
+                    fieldDelimiter: ';'
+                });
+
+                await csvWriter.writeRecords(results);
+            }
+
+            res.json({
+                success: true,
+                count: results.length,
+                rows: results
+            });
+        })
+        .on('error', err => {
+            console.error(err);
+            res.status(500).json({ success: false });
+        });
+});
+
+
+app.get("/download-bulk-results", (req, res) => {
+    if (!fs.existsSync(BULK_RESULTS_FILE)) {
+        return res.status(404).send("No search results found.");
+    }
+
+    res.download(BULK_RESULTS_FILE, "search-results.csv", err => {
+        if (err) {
+            console.error("Error downloading file:", err);
+            res.status(500).send("Error downloading file.");
+        }
+    });
+});
+
 
 // ========================
 // Start server
@@ -406,6 +481,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Export the Express app for Vercel
 module.exports = app;
+
 
 
 
