@@ -197,7 +197,7 @@ body {
 #searchBtn:active,
 #exportBtn:active,
 #process_btn:active,
-#select_btn:active {
+#select_btn:active, #bulkSearchBtn:active, #bulkDownloadBtn:active {
     transform: translateY(-1px);
     /* moves UP slightly */
 
@@ -296,8 +296,8 @@ body {
     color: #999;
 }
 
-#masterTable {
-
+#masterTable, #bulkTable {
+ 
     width: 100%;
     border-collapse: collapse;
     margin-top: 15px;
@@ -306,7 +306,7 @@ body {
 }
 
 /* Header (column names) */
-#masterTable thead th {
+#masterTable thead th, #bulkTable thead th {
     background-color: #82c7f4;
     /* light blue */
     color: white;
@@ -317,38 +317,38 @@ body {
 }
 
 /* Body cells */
-#masterTable tbody td {
+#masterTable tbody td, #bulkTable tbody td {
     padding: 8px 10px;
     border-bottom: 1px solid #ddd;
     color: #333;
 }
 
 /* Alternate row colors */
-#masterTable tbody tr:nth-child(odd) {
+#masterTable tbody tr:nth-child(odd), #bulkTable tbody tr:nth-child(odd) {
     background-color: #f4f4f4;
     /* light gray */
 }
 
-#masterTable tbody tr:nth-child(even) {
+#masterTable tbody tr:nth-child(even), #bulkTable tbody tr:nth-child(even) {
     background-color: #eaf3fb;
     /* very light blue */
 }
 
 /* Hover effect */
-#masterTable tbody tr:hover {
+#masterTable tbody tr:hover, #bulkTable tbody tr:hover {
     background-color: #d6eaff;
     cursor: pointer;
 }
 
 /* Optional: smooth look */
-#masterTable {
+#masterTable, #bulkTable {
     border-radius: 6px;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 /* Search status label */
-.status-label {
+.status-label, .bulk-status-label {
     font-size: 12px;
     font-weight: 600;
     margin-bottom: 0px;
@@ -358,19 +358,19 @@ body {
 }
 
 /* Blue when searching */
-.status-searching {
+.status-searching, .bulk-status-searching {
     background-color: #dbeafe;
     color: #1d4ed8;
 }
 
 /* Green when found */
-.status-found {
+.status-found, .bulk-status-found {
     background-color: #dcfce7;
     color: #15803d;
 }
 
 /* Red when not found */
-.status-notfound {
+.status-notfound, .bulk-status-notfound {
     background-color: #fee2e2;
     color: #b91c1c;
 }
@@ -578,7 +578,7 @@ body {
 #scanPopupOverlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.45);
+    background: rgba(0, 0, 0, 0.45);
     display: none;
     justify-content: center;
     align-items: center;
@@ -599,16 +599,136 @@ body {
 }
 
 #popupBackBtn {
+
     background: none;
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
 }
 
+/* ===========================
+   BULK SEARCH LAYOUT
+=========================== */
+
+.bulk-search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 35px;
+    margin-top: 35px;
+}
+
+/* BIG TEXTAREA */
+#bulkInput {
+    width: 50%;
+    min-height: 120px;
+    padding: 10px 14px;
+    font-size: 1rem;
+    resize: none;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    outline: none;
+    transition: all 0.25s ease;
+    background: #f9f9f9;
+
+}
+
+#bulkInput:focus {
+    border-color: #4CAF50;
+    background: #fff;
+    box-shadow: 0 0 6px rgba(76, 175, 80, 0.3);
+}
+
+#bulkInput:placeholder {
+    color: #999;
+}
+
+/* BUTTON STACK */
+.bulk-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* BUTTON STYLE */
+.bulk-buttons button {
+    padding: 12px 18px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+
+
+#bulkSearchBtn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    margin-left: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: gray;
+    color: #fff;
+    cursor: not-allowed;
+}
+
+#bulkSearchBtn.enabled {
+    background-color: #3498db;
+    cursor: pointer;
+}
+
+#bulkSearchBtn.enabled:hover {
+    background-color: #2688ca;
+}
+
+#bulkDownloadBtn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    margin-left: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: gray;
+    color: #fff;
+    cursor: not-allowed;
+
+}
+
+#bulkDownloadBtn.enabled {
+    background-color: #2ecc71;
+}
+
+#bulkDownloadBtn.enabled:hover {
+    background-color: #27ae60;
+
+    cursor: pointer;
+
+}
+
+
+/* MOBILE */
+@media (max-width: 600px) {
+    .bulk-search-container {
+        flex-direction: column;
+    }
+
+    .bulk-buttons {
+        flex-direction: row;
+    }
+
+    .bulk-buttons button {
+        flex: 1;
+    }
+}
+
 
 /* Responsiveness  */
 
 @media (max-width: 870px) {
+
+    #bulkInput {
+        width: 70%;
+    }
 
     .search-container>div:nth-of-type(1) {
 
@@ -695,6 +815,11 @@ body {
 
 @media (max-width: 600px) {
 
+    #bulkInput {
+        width: 90%;
+    }
+
+
     .scan-container {
         width: 100%;
         overflow-x: auto;
@@ -719,7 +844,7 @@ body {
     }
 
 
-    .table-container {
+    .table-container, .bulk-table-container {
         width: 100%;
         overflow-x: auto;
         /* horizontal scroll */
@@ -727,7 +852,7 @@ body {
         /* smooth on mobile */
     }
 
-    #masterTable {
+    #masterTable, #bulkTable {
         width: max-content;
         /* table expands to fit content */
         min-width: 100%;
@@ -736,7 +861,7 @@ body {
     }
 
     #masterTable th,
-    #masterTable td {
+    #masterTable td, #bulkTable th, #bulkTable td {
         white-space: nowrap;
         /* prevent wrapping */
     }
@@ -791,6 +916,21 @@ body {
 
 
 @media (max-width: 500px) {
+
+    #bulkInput {
+        width: 100%;
+    }
+
+    .bulk-buttons {
+        width: 100%;
+        justify-content: center;
+
+    }
+
+ 
+    #bulkSearchBtn {
+        margin-left: 0;
+    }
 
     #statusSection {
         display: flex;
@@ -885,4 +1025,3 @@ body {
 
 
 }
-
