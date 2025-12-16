@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ======================
     // Tab switching
     // ======================
-    function openTab(tabName, element) {
+   function openTab(tabName, element) {
         const tabcontent = document.getElementsByClassName("tabcontent");
         const tablinks = document.getElementsByClassName("tablink");
 
@@ -14,8 +14,115 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById(tabName).style.display = "block";
         element.classList.add("active");
+
+
+        const focusMap = {
+            scan: 'barcode_input',
+            search: 'bulkInput',
+            database: 'searchInput'
+        };
+
+        const inputId = focusMap[tabName];
+
+        if (inputId) {
+            setTimeout(() => {
+                const el = document.getElementById(inputId);
+                if (el) {
+                    el.focus();
+                }
+            }, 50); // small delay helps mobile browsers
+        }
+
+
     }
     window.openTab = openTab; // expose globally
+
+     // ===========================
+    // BULK SEARCH 
+    // ===========================
+
+    const bulkInput = document.getElementById('bulkInput');
+    const bulkSearchBtn = document.getElementById('bulkSearchBtn');
+    const bulkDownloadBtn = document.getElementById('bulkDownloadBtn');
+
+    bulkDownloadBtn.addEventListener("click", () => {
+        window.location.href = "/download-bulk-results";
+    });
+
+
+    // Enable search when user types
+    bulkInput.addEventListener('input', () => {
+        const hasValue = bulkInput.value.trim().length > 0;
+        if (hasValue) {
+            bulkSearchBtn.classList.add('enabled')
+            bulkSearchBtn.disabled = false
+        } else {
+            bulkSearchBtn.classList.remove('enabled')
+            b.disabled = true
+        }
+
+    });
+
+    // bulk search
+    bulkSearchBtn.addEventListener('click', async () => {
+        const codes = bulkInput.value
+            .split('\n')
+            .map(l => l.trim().toUpperCase())
+            .filter(Boolean);
+
+        if (!codes.length) return;
+
+        bulkSearchBtn.disabled = true;
+        bulkSearchBtn.textContent = 'Searching...';
+        bulkSearchStatus.textContent = 'Searching...';
+        bulkSearchStatus.style.color = 'blue';
+
+        try {
+            const res = await fetch('/bulk-search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ codes })
+            });
+
+            const data = await res.json();
+
+            bulkTableBody.innerHTML = '';
+
+            if (data.success && data.rows.length > 0) {
+                data.rows.forEach(row => {
+                    const tr = document.createElement('tr');
+
+                    ['SKU', 'EAN-1', 'EAN-2', 'SHELF-1', 'SHELF-2'].forEach(col => {
+                        const td = document.createElement('td');
+                        td.textContent = row[col] || '';
+                        tr.appendChild(td);
+                    });
+
+                    bulkTableBody.appendChild(tr);
+                });
+
+                bulkSearchStatus.textContent = `Found ${data.rows.length} record(s)`;
+                bulkSearchStatus.style.color = 'green';
+                bulkDownloadBtn.classList.add('enabled')
+                bulkDownloadBtn.disabled = false;
+
+            } else {
+                bulkSearchStatus.textContent = 'No records found';
+                bulkSearchStatus.style.color = 'red';
+                bulkDownloadBtn.classList.remove('enabled')
+                bulkDownloadBtn.disabled = true;
+            }
+
+        } catch (err) {
+            console.error(err);
+            bulkSearchStatus.textContent = 'Search failed';
+            bulkSearchStatus.style.color = 'red';
+        }
+
+        bulkSearchBtn.disabled = false;
+        bulkSearchBtn.textContent = 'Search';
+    });
+
 
     // ======================
     // Barcode scanner setup (Scan Tab)
@@ -324,6 +431,7 @@ async function processInput() {
     barcodeInput.focus();
 
 });
+
 
 
 
