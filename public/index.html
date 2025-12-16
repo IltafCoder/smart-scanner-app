@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="./styles.css">
     <script src="./script.js" defer></script>
 
-    <title>Smart Scanner</title>
+    <title>Intelligens Szkenner</title>
 </head>
 
 <div id="scanPopupOverlay">
@@ -41,8 +41,8 @@
                 <table id="scanResultTable" style="display:none">
                     <thead>
                         <tr>
-                            <th>SHELF-1</th>
-                            <th>SHELF-2</th>
+                            <th>RAKTÁR</th>
+                            <th>BOLT</th>
                         </tr>
                     </thead>
                     <tbody id="scanTableBody"></tbody>
@@ -66,24 +66,24 @@
 
     <!-- Banner -->
     <div class="banner">
-        <h1>Smart Scanner</h1>
+        <h1>Intelligens Szkenner</h1>
     </div>
 
     <!-- Navigation Tabs -->
     <div class="navbar">
         <button class="tablink active" onclick="openTab('scan', this)">
             <span class="icon">📷</span>
-            <span class="text">Scan</span>
+            <span class="text">Letapogatás</span>
         </button>
 
         <button class="tablink" onclick="openTab('search', this)">
             <span class="icon">🔍</span>
-            <span class="text">Bulk Search</span>
+            <span class="text">Tömeges Keresés</span>
         </button>
 
         <button class="tablink" onclick="openTab('database', this)">
             <span class="icon">🗂️</span>
-            <span class="text">Database</span>
+            <span class="text">Adatbázis</span>
         </button>
     </div>
 
@@ -92,20 +92,20 @@
     <!-- ====================================================== -->
     <div id="scan" class="tabcontent">
 
-        <h2>Scan Product</h2>
-        <p>Please scan your product using the PDA scanner.</p>
+        <h2>Termék Beolvasása</h2>
+        <p>Kérjük, szkennelje be a terméket a PDA szkennerrel.</p>
 
         <!-- Example image -->
         <div class="barcode-example">
             <img src="./images/barcode.jpg" alt="Example Product Barcode">
-            <p>Product Example Barcode</p>
+            <p>Termékpélda Vonalkód</p>
         </div>
 
         <!-- Scan Controls -->
         <div class="scan-controls">
-            <input type="text" id="barcode_input" placeholder="Scan your product here" autofocus>
-            <button id="select_btn">Select</button>
-            <button id="process_btn" disabled>Process</button>
+            <input type="text" id="barcode_input" placeholder="Itt szkennelje be termékét" autofocus>
+            <button id="select_btn">Válassza Ki</button>
+            <button id="process_btn" disabled>Folyamat</button>
         </div>
 
          
@@ -116,18 +116,18 @@
     <!-- ====================================================== -->
     <div id="search" class="tabcontent" style="display:none;">
 
-        <h2>Bulk Search</h2>
-        <p>Provide a list of SKU / EAN (one per line).</p>
+        <h2>Tömeges Keresés</h2>
+        <p>Adja meg a SKU/EAN listát (soronként egyet).</p>
 
         <div class="bulk-search-container">
 
             <!-- BIG INPUT -->
-            <textarea id="bulkInput" placeholder="Paste SKU / EAN here (one per line)"></textarea>
+            <textarea id="bulkInput" placeholder="Illessze be ide a SKU-t / EAN-t (soronként egyet)"></textarea>
 
             <!-- BUTTONS -->
             <div class="bulk-buttons">
-                <button id="bulkSearchBtn" disabled>Search</button>
-                <button id="bulkDownloadBtn" disabled>Download</button>
+                <button id="bulkSearchBtn" disabled>Keresés</button>
+                <button id="bulkDownloadBtn" disabled>Letöltés</button>
             </div>
 
         </div>
@@ -135,7 +135,7 @@
 
         <!-- Table -->
         <div style="margin-bottom: 25px;">
-            <p id="bulkSearchStatus" class="bulk-status-label">Ready</p>
+            <p id="bulkSearchStatus" class="bulk-status-label">Kész</p>
 
             <div class="bulk-table-container">
                 <table id="bulkTable">
@@ -144,8 +144,8 @@
                             <th>SKU</th>
                             <th>EAN-1</th>
                             <th>EAN-2</th>
-                            <th>SHELF-1</th>
-                            <th>SHELF-2</th>
+                            <th>RAKTÁR</th>
+                            <th>BOLT</th>
                         </tr>
                     </thead>
                     <tbody id="bulkTableBody"></tbody>
@@ -161,13 +161,13 @@
     <!-- ====================================================== -->
     <div id="database" class="tabcontent" style="display:none;">
 
-        <h2>Manage Database</h2>
-        <p>You can upload CSV files or export the database.</p>
+        <h2>Adatbázis Kezelése</h2>
+        <p>Feltölthetsz CSV fájlokat, vagy exportálhatod az adatbázist.</p>
 
         <!-- CSV Upload -->
         <div class="upload-container">
             <input type="file" id="csvFileInput" accept=".csv" hidden>
-            <label for="csvFileInput" class="upload-label">📤 Upload CSV</label>
+            <label for="csvFileInput" class="upload-label">📤 CSV Feltöltése</label>
             <span id="uploadStatus"></span>
         </div>
 
@@ -176,8 +176,8 @@
 
             <!-- Search Box -->
             <div>
-                <p>Search a product using EAN/SKU code.</p>
-                <input type="text" id="searchInput" placeholder="Enter SKU or EAN">
+                <p>Keressen egy terméket EAN/SKU kód alapján.</p>
+                <input type="text" id="searchInput" placeholder="Adja meg a SKU-t vagy az EAN-t">
 
                 <div>
                     <!-- Radio Buttons -->
@@ -185,13 +185,13 @@
                     <label><input type="radio" name="searchType" value="EAN"> EAN</label>
 
                     <!-- Search Button -->
-                    <button id="searchBtn">Search</button>
+                    <button id="searchBtn">Keresés</button>
                 </div>
             </div>
 
             <!-- Table -->
             <div>
-                <p id="searchStatus" class="status-label">Ready</p>
+                <p id="searchStatus" class="status-label">Kész</p>
 
                 <div class="table-container">
                     <table id="masterTable">
@@ -200,8 +200,8 @@
                                 <th>SKU</th>
                                 <th>EAN-1</th>
                                 <th>EAN-2</th>
-                                <th>SHELF-1</th>
-                                <th>SHELF-2</th>
+                                <th>RAKTÁR</th>
+                                <th>BOLT</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody"></tbody>
@@ -213,14 +213,15 @@
 
         <!-- Footer -->
         <div id="dbFooter">
-            <p id="totalRecords">Total Records: 0</p>
-            <button id="exportBtn" disabled>Export Database</button>
+            <p id="totalRecords">Összes Rekord: 0</p>
+            <button id="exportBtn" disabled>Adatbázis Exportálása</button>
         </div>
 
     </div>
 
 </body>
 </html>
+
 
 
 
