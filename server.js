@@ -29,6 +29,7 @@ const UPLOAD_FOLDER = process.env.VERCEL
 if (!fs.existsSync(UPLOAD_FOLDER)) fs.mkdirSync(UPLOAD_FOLDER, { recursive: true });
 const MASTER_FILE = path.join(UPLOAD_FOLDER, 'masterdatabase.csv');
 const MASTER_COLUMNS = ['SKU', 'EAN-1', 'EAN-2', 'SHELF-1', 'SHELF-2'];
+const BULK_RESULTS_FILE = path.join(UPLOAD_FOLDER, 'search-results.csv');
 
 // ========================
 // Multer setup for CSV upload
@@ -481,6 +482,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Export the Express app for Vercel
 module.exports = app;
+
 
 
 
