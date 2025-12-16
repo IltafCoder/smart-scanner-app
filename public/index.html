@@ -111,13 +111,49 @@
          
     </div>
 
-    <!-- ====================================================== -->
-    <!-- BULK SEARCH TAB (COMING LATER) -->
+     <!-- ====================================================== -->
+    <!-- BULK SEARCH TAB -->
     <!-- ====================================================== -->
     <div id="search" class="tabcontent" style="display:none;">
+
         <h2>Bulk Search</h2>
-        <p>Here you can search using a list of SKU/EAN.</p>
-        <p>This feature will be updated in the next version.</p>
+        <p>Provide a list of SKU / EAN (one per line).</p>
+
+        <div class="bulk-search-container">
+
+            <!-- BIG INPUT -->
+            <textarea id="bulkInput" placeholder="Paste SKU / EAN here (one per line)"></textarea>
+
+            <!-- BUTTONS -->
+            <div class="bulk-buttons">
+                <button id="bulkSearchBtn" disabled>Search</button>
+                <button id="bulkDownloadBtn" disabled>Download</button>
+            </div>
+
+        </div>
+
+
+        <!-- Table -->
+        <div style="margin-bottom: 25px;">
+            <p id="bulkSearchStatus" class="bulk-status-label">Ready</p>
+
+            <div class="bulk-table-container">
+                <table id="bulkTable">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>EAN-1</th>
+                            <th>EAN-2</th>
+                            <th>SHELF-1</th>
+                            <th>SHELF-2</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bulkTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+
     </div>
 
     <!-- ====================================================== -->
@@ -185,6 +221,7 @@
 
 </body>
 </html>
+
 
 
 
