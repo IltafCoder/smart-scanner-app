@@ -28,7 +28,7 @@ const UPLOAD_FOLDER = process.env.VERCEL
     : path.join(__dirname, "uploads");
 if (!fs.existsSync(UPLOAD_FOLDER)) fs.mkdirSync(UPLOAD_FOLDER, { recursive: true });
 const MASTER_FILE = path.join(UPLOAD_FOLDER, 'masterdatabase.csv');
-const MASTER_COLUMNS = ['SKU', 'EAN-1', 'EAN-2', 'SHELF-1', 'SHELF-2'];
+const MASTER_COLUMNS = ['SKU', 'EAN-1', 'EAN-2', 'RAKTÁR', 'BOLT'];
 const BULK_RESULTS_FILE = path.join(UPLOAD_FOLDER, 'search-results.csv');
 
 // ========================
@@ -47,7 +47,7 @@ const upload = multer({
     storage,
     fileFilter: (req, file, cb) => {
         if (file.mimetype !== "text/csv" && path.extname(file.originalname).toLowerCase() !== ".csv") {
-            return cb(new Error("Only CSV files are allowed"), false);
+            return cb(new Error("Csak CSV fájlok engedélyezettek"), false);
         }
         cb(null, true);
     }
@@ -108,8 +108,8 @@ app.post("/scan", (req, res) => {
                         SKU: r["SKU"],
                         EAN1: r["EAN-1"],
                         EAN2: r["EAN-2"],
-                        SHELF1: r["SHELF-1"],
-                        SHELF2: r["SHELF-2"]
+                        SHELF1: r["RAKTÁR"],
+                        SHELF2: r["BOLT"]
                     }))
                 });
             } else {
@@ -127,7 +127,7 @@ app.post("/scan", (req, res) => {
 
 // Global error handler for Multer fileFilter
 app.use((err, req, res, next) => {
-    if (err instanceof multer.MulterError || err.message === "Only CSV files are allowed") {
+    if (err instanceof multer.MulterError || err.message === "Csak CSV fájlok engedélyezettek") {
         return res.status(400).json({ message: err.message });
     }
     next(err);
@@ -196,7 +196,7 @@ async function deduplicateMasterCSV() {
 // CSV Upload
 app.post("/upload-csv", upload.single("csv"), async (req, res) => {
     const file = req.file;
-    if (!file) return res.status(400).json({ message: "No file uploaded" });
+    if (!file) return res.status(400).json({ message: "Nincs fájl feltöltve" });
 
     if (!fs.existsSync(MASTER_FILE)) {
         fs.writeFileSync(MASTER_FILE, MASTER_COLUMNS.join(";") + "\n");
@@ -234,14 +234,14 @@ app.post("/upload-csv", upload.single("csv"), async (req, res) => {
         await deduplicateMasterCSV();
 
         res.json({
-            message: "File uploaded!",
+            message: "Fájl feltöltve!",
             filename: file.originalname
         });
 
     } catch (err) {
         console.error(err);
         if (fs.existsSync(uploadedFilePath)) fs.unlinkSync(uploadedFilePath);
-        res.status(500).json({ message: "Error processing CSV" });
+        res.status(500).json({ message: "Hiba a CSV feldolgozása közben" });
     }
 });
 
@@ -252,7 +252,7 @@ app.get("/search-master", (req, res) => {
     if (!type || !query) return res.json({ data: [] });
 
     if (!fs.existsSync(MASTER_FILE)) {
-        return res.json({ data: [], message: "Master database not found" });
+        return res.json({ data: [], message: "A fő adatbázis nem található" });
     }
 
     const results = [];
@@ -289,8 +289,8 @@ app.get("/search-master", (req, res) => {
         })
         .on("end", () => res.json({ data: results }))
         .on("error", err => {
-            console.error("Error reading master CSV:", err);
-            res.status(500).json({ data: [], message: "Error reading master database" });
+            console.error("Hiba a fő CSV olvasása közben:", err);
+            res.status(500).json({ data: [], message: "Hiba a főadatbázis olvasásakor" });
         });
 });
 
@@ -319,13 +319,13 @@ app.get("/total-records", (req, res) => {
 // Download masterdatabase.csv
 app.get("/download-master", (req, res) => {
     if (!fs.existsSync(MASTER_FILE)) {
-        return res.status(404).send("Master database not found.");
+        return res.status(404).send("A fő adatbázis nem található.");
     }
 
     res.download(MASTER_FILE, "masterdatabase.csv", err => {
         if (err) {
-            console.error("Error downloading file:", err);
-            res.status(500).send("Error downloading file.");
+            console.error("Hiba a fájl letöltése közben:", err);
+            res.status(500).send("Hiba a fájl letöltése közben.");
         }
     });
 });
@@ -367,7 +367,7 @@ app.post('/update-master', express.json(), (req, res) => {
         })
         .on('end', () => {
             if (!updated) {
-                return res.json({ success: false, message: "No matching record found" });
+                return res.json({ success: false, message: "Nem található egyező rekord" });
             }
 
             const headers = Object.keys(rows[0]).map(h => ({
@@ -384,12 +384,12 @@ app.post('/update-master', express.json(), (req, res) => {
             csvWriter.writeRecords(rows)
                 .then(() => res.json({ success: true }))
                 .catch(err => {
-                    console.error('CSV write error:', err);
+                    console.error('CSV írási hiba:', err);
                     res.json({ success: false });
                 });
         })
         .on('error', err => {
-            console.error('CSV read error:', err);
+            console.error('CSV írási hiba:', err);
             res.json({ success: false });
         });
 });
@@ -459,13 +459,13 @@ app.post('/bulk-search', express.json(), (req, res) => {
 
 app.get("/download-bulk-results", (req, res) => {
     if (!fs.existsSync(BULK_RESULTS_FILE)) {
-        return res.status(404).send("No search results found.");
+        return res.status(404).send("Nincs találat a keresésben.");
     }
 
     res.download(BULK_RESULTS_FILE, "search-results.csv", err => {
         if (err) {
-            console.error("Error downloading file:", err);
-            res.status(500).send("Error downloading file.");
+            console.error("Hiba a fájl letöltése közben:", err);
+            res.status(500).send("Hiba a fájl letöltése közben.");
         }
     });
 });
@@ -482,6 +482,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Export the Express app for Vercel
 module.exports = app;
+
 
 
 
