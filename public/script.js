@@ -73,8 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!codes.length) return;
 
         bulkSearchBtn.disabled = true;
-        bulkSearchBtn.textContent = 'Searching...';
-        bulkSearchStatus.textContent = 'Searching...';
+        bulkSearchBtn.textContent = 'Keresés...';
+        bulkSearchStatus.textContent = 'Keresés...';
         bulkSearchStatus.style.color = 'blue';
 
         try {
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 data.rows.forEach(row => {
                     const tr = document.createElement('tr');
 
-                    ['SKU', 'EAN-1', 'EAN-2', 'SHELF-1', 'SHELF-2'].forEach(col => {
+                    ['SKU', 'EAN-1', 'EAN-2', 'RAKTÁR', 'BOLT'].forEach(col => {
                         const td = document.createElement('td');
                         td.textContent = row[col] || '';
                         tr.appendChild(td);
@@ -101,13 +101,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     bulkTableBody.appendChild(tr);
                 });
 
-                bulkSearchStatus.textContent = `Found ${data.rows.length} record(s)`;
+                bulkSearchStatus.textContent = `Talált ${data.rows.length}`;
                 bulkSearchStatus.style.color = 'green';
                 bulkDownloadBtn.classList.add('enabled')
                 bulkDownloadBtn.disabled = false;
 
             } else {
-                bulkSearchStatus.textContent = 'No records found';
+                bulkSearchStatus.textContent = 'Nem található rekord';
                 bulkSearchStatus.style.color = 'red';
                 bulkDownloadBtn.classList.remove('enabled')
                 bulkDownloadBtn.disabled = true;
@@ -115,12 +115,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (err) {
             console.error(err);
-            bulkSearchStatus.textContent = 'Search failed';
+            bulkSearchStatus.textContent = 'A keresés sikertelen';
             bulkSearchStatus.style.color = 'red';
         }
 
         bulkSearchBtn.disabled = false;
-        bulkSearchBtn.textContent = 'Search';
+        bulkSearchBtn.textContent = 'Keresés';
     });
 
 
@@ -166,14 +166,14 @@ async function processInput() {
         if (!code) return;
 
         lastScannedCode = code;
-        resultBarcode.textContent = `Scanned Barcode: ${code}`;
+        resultBarcode.textContent = `Beolvasott Vonalkód: ${code}`;
 
         // Reset tables and status
         infoTableBody.innerHTML = "";
         scanTableBody.innerHTML = "";
         infoTable.style.display = "none";
         scanResultTable.style.display = "none";
-        scanStatus.textContent = "Searching...";
+        scanStatus.textContent = "Keresés...";
         scanStatus.style.color = "blue";
 
         try {
@@ -245,7 +245,7 @@ async function processInput() {
 
                 
             } else {
-                scanStatus.textContent = "No record found";
+                scanStatus.textContent = "Nem található rekord";
                 scanStatus.style.color = "red";
             }
 
@@ -253,8 +253,8 @@ async function processInput() {
                 popup.classList.add("active");
 
         } catch (err) {
-            console.error("Error scanning:", err);
-            scanStatus.textContent = "Error scanning";
+            console.error("Hiba a beolvasásnál:", err);
+            scanStatus.textContent = "Hiba a beolvasásnál";
             scanStatus.style.color = "red";
         }
 
@@ -274,7 +274,7 @@ async function processInput() {
         if (!row) return;
 
         const updatedData = {};
-        const cols = ["SHELF-1", "SHELF-2"]; // your editable columns
+        const cols = ["RAKTÁR", "BOLT"]; // your editable columns
 
         row.querySelectorAll('.editable-cell').forEach((div, index) => {
             updatedData[cols[index]] = div.textContent.trim();
@@ -293,14 +293,13 @@ async function processInput() {
 
             const data = await res.json();
             if (data.success) {
-                scanStatus.textContent = "Record updated successfully!"
+                scanStatus.textContent = "A felvétel sikeresen frissítve!"
                 updateBtn.disabled = true; // disable until further edits
             } else {
-                scanStatus.textContent = "Updated failed!"
+                scanStatus.textContent = "A frissítés nem sikerült!"
             }
         } catch (err) {
             console.error(err);
-            alert('Error updating record.');
         }
     });
 
@@ -315,7 +314,7 @@ async function processInput() {
         const file = fileInput.files[0];
         if (!file) return;
 
-        uploadStatus.innerHTML = `<span style="color:blue">Uploading ${file.name}...</span>`;
+        uploadStatus.innerHTML = `<span style="color:blue">Feltöltés ${file.name}...</span>`;
 
         try {
             const formData = new FormData();
@@ -333,7 +332,7 @@ async function processInput() {
 
         } catch (err) {
             console.error(err);
-            uploadStatus.innerHTML = `<span style="color:red">Upload failed!</span>`;
+            uploadStatus.innerHTML = `<span style="color:red">A feltöltés sikertelen!</span>`;
         } finally {
             fileInput.value = '';
         }
@@ -353,7 +352,7 @@ async function processInput() {
 
         const type = document.querySelector('input[name="searchType"]:checked').value;
 
-        searchStatusLabel.textContent = "Searching...";
+        searchStatusLabel.textContent = "Keresés...";
         searchStatusLabel.className = "status-label status-searching";
 
         try {
@@ -364,19 +363,19 @@ async function processInput() {
             masterTableBody.innerHTML = "";
 
             if (!data || data.length === 0) {
-                searchStatusLabel.textContent = "No record found";
+                searchStatusLabel.textContent = "Nem található rekord";
                 searchStatusLabel.className = "status-label status-notfound";
-                masterTableBody.innerHTML = "<tr><td colspan='5'>No matching data</td></tr>";
+                masterTableBody.innerHTML = "<tr><td colspan='5'>Nincs egyező adat</td></tr>";
                 return;
             }
 
-            searchStatusLabel.textContent = "Record found";
+            searchStatusLabel.textContent = "Feljegyzés található";
             searchStatusLabel.className = "status-label status-found";
 
             data.forEach(row => {
 
                 const tr = document.createElement("tr");
-                ["SKU", "EAN-1", "EAN-2", "SHELF-1", "SHELF-2"].forEach(col => {
+                ["SKU", "EAN-1", "EAN-2", "RAKTÁR", "BOLT"].forEach(col => {
                     const td = document.createElement("td");
                     td.textContent = row[col] || '';
                     tr.appendChild(td);
@@ -386,7 +385,7 @@ async function processInput() {
 
         } catch (err) {
             console.error(err);
-            searchStatusLabel.textContent = "Error searching";
+            searchStatusLabel.textContent = "Hiba a keresés során";
             searchStatusLabel.className = "status-label status-notfound";
         }
     });
@@ -399,7 +398,7 @@ async function processInput() {
             const res = await fetch("/total-records");
             const data = await res.json();
 
-            document.getElementById("totalRecords").textContent = `Total Records: ${data.total}`;
+            document.getElementById("totalRecords").textContent = `Összes Rekord: ${data.total}`;
 
             const exportBtn = document.getElementById("exportBtn");
             if (data.total > 0) {
@@ -411,7 +410,7 @@ async function processInput() {
             }
 
         } catch (err) {
-            console.error("Failed to load total records:", err);
+            console.error("Nem sikerült betölteni az összes rekordot:", err);
         }
     }
 
@@ -431,6 +430,7 @@ async function processInput() {
     barcodeInput.focus();
 
 });
+
 
 
 
