@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="./styles.css">
     <script src="./script.js" defer></script>
 
-    <title>Intelligens Szkenner</title>
+    <title>KameraPro Polc Nézegető</title>
 </head>
 
 <div id="scanPopupOverlay">
@@ -66,14 +66,14 @@
 
     <!-- Banner -->
     <div class="banner">
-        <h1>Intelligens Szkenner</h1>
+        <h1>KameraPro Polc Nézegető</h1>
     </div>
 
     <!-- Navigation Tabs -->
     <div class="navbar">
         <button class="tablink active" onclick="openTab('scan', this)">
             <span class="icon">📷</span>
-            <span class="text">Letapogatás</span>
+            <span class="text">Keresés</span>
         </button>
 
         <button class="tablink" onclick="openTab('search', this)">
@@ -93,7 +93,7 @@
     <div id="scan" class="tabcontent">
 
         <h2>Termék Beolvasása</h2>
-        <p>Kérjük, szkennelje be a terméket a PDA szkennerrel.</p>
+        <p>Kérjük olvasd be a termék cikkszámát vagy EAN kódját!</p>
 
         <!-- Example image -->
         <div class="barcode-example">
@@ -105,7 +105,7 @@
         <div class="scan-controls">
             <input type="text" id="barcode_input" placeholder="Itt szkennelje be termékét" autofocus>
             <button id="select_btn">Válassza Ki</button>
-            <button id="process_btn" disabled>Folyamat</button>
+            <button id="process_btn" disabled>Beolvasás</button>
         </div>
 
          
@@ -221,6 +221,7 @@
 
 </body>
 </html>
+
 
 
 
